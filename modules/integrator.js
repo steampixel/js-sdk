@@ -493,7 +493,18 @@ const EnderecoIntegrator = {
 
         addressObject.setIntent(options.intent);
 
-        addressObject.setTargetSelector(options.targetSelector);
+        let resolvedTargetSelector = options.targetSelector || 'body';
+
+        if (integrator.resolvers.targetSelectorResolve) {
+            resolvedTargetSelector = await integrator.resolvers.targetSelectorResolve(
+                options, // The initial options
+                fieldSelectors, // All field selectors for context
+                addressObject // The address object for additional context
+            );
+        }
+
+        addressObject.setTargetSelector(resolvedTargetSelector);
+
         addressObject.setInsertPosition(options.insertPosition);
 
         // Preselect a value.
