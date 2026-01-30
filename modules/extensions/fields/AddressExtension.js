@@ -830,6 +830,7 @@ const AddressExtension = {
         ExtendableObject._addressType = 'general_address';
         ExtendableObject._intent = 'edit';
         ExtendableObject._targetSelector = 'body';
+        ExtendableObject._insertPosition = 'beforeend';
 
         // Subscriber storage
         ExtendableObject._subscribers.address = [];
@@ -897,7 +898,7 @@ const AddressExtension = {
 
         /**
          * Gets the current targetSelector.
-         * @returns {string} - The current targetSelector.
+         * @returns {string} - The current DOM target.
          */
         ExtendableObject.getTargetSelector = () => {
             return ExtendableObject._targetSelector;
@@ -905,10 +906,32 @@ const AddressExtension = {
 
         /**
          * Sets the current targetSelector.
-         * @param {string} targetSelector - The intent to set.
+         * @param {string} targetSelector - The DOM target.
          */
         ExtendableObject.setTargetSelector = (targetSelector) => {
             ExtendableObject._targetSelector = targetSelector;
+        };
+
+        /**
+         * Gets the current insertPosition.
+         * @returns {string} - The current DOM target insert position.
+         */
+        ExtendableObject.getInsertPosition = () => {
+            return ExtendableObject._insertPosition;
+        };
+
+        /**
+         * Sets the current insertPosition.
+         * @param {string} insertPosition - The DOM target insert position.
+         */
+        ExtendableObject.setInsertPosition = (insertPosition) => {
+            if (insertPosition == null) { insertPosition = 'beforeend'; }
+            const validInsertPositions = ['beforebegin', 'afterbegin', 'beforeend', 'afterend'];
+
+            if (!validInsertPositions.includes(insertPosition)) {
+                throw new Error(`Invalid insertPosition "${insertPosition}". Allowed values are: ${validInsertPositions.join(', ')}`);
+            }
+            ExtendableObject._insertPosition = insertPosition;
         };
 
         // Add getter and setter for fields.
@@ -1501,10 +1524,11 @@ const AddressExtension = {
                 );
 
                 let targetElement = ExtendableObject.getTargetSelector();
+                const insertPosition = ExtendableObject.getInsertPosition();
 
                 if (!document.querySelector(targetElement)) { targetElement = 'body'; }
 
-                document.querySelector(targetElement).insertAdjacentHTML('beforeend', modalHTML);
+                document.querySelector(targetElement).insertAdjacentHTML(insertPosition, modalHTML);
                 document.querySelector('body').classList.add('endereco-no-scroll');
 
                 ExtendableObject.onAfterModalRendered.forEach(function (cb) {
@@ -1661,10 +1685,11 @@ const AddressExtension = {
             );
 
             let targetElement = ExtendableObject.getTargetSelector();
+            const insertPosition = ExtendableObject.getInsertPosition();
 
             if (!document.querySelector(targetElement)) { targetElement = 'body'; }
 
-            document.querySelector(targetElement).insertAdjacentHTML('beforeend', predictionsWrapperHtml);
+            document.querySelector(targetElement).insertAdjacentHTML(insertPosition, predictionsWrapperHtml);
             document.querySelector('body').classList.add('endereco-no-scroll');
 
             ExtendableObject.onAfterModalRendered.forEach(function (cb) {

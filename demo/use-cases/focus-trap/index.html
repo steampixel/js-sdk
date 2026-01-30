@@ -69,6 +69,7 @@
 		}
 
 		function enderecoLoadAMSConfig() {
+
 			window.EnderecoIntegrator.defaultCountry = 'DE';
 			window.EnderecoIntegrator.themeName = 'my-theme';
 			window.EnderecoIntegrator.defaultCountrySelect = true; // Feature "Preselect country"
@@ -269,6 +270,34 @@
 				});
 			}
 
+			EnderecoIntegrator.resolvers.targetSelectorResolve = (options, fieldSelectors, addressObject) => {
+
+				// Example Modal 1: Use the selector as given
+				if(options.name === 'first_address') {
+					return options.targetSelector;
+				}
+
+				// Example Modal 2: Use no selector as given
+				if(options.name === 'second_address') {
+					return options.targetSelector;
+				}
+
+				// Example Modal 3: Find form from any bound field
+				if(options.name === 'third_address') {
+					const field = document.querySelector(fieldSelectors.postalCode);
+					if (field) {
+						const form = field.closest('form');
+						if (form) {
+							if (!form.id) {
+								form.id = 'endereco-form-' + Math.random().toString(36).substr(2, 9);
+							}
+							return `#${form.id}`;
+						}
+					}
+				}
+
+			};
+
 			// Execute all function that have been called throughout the page.
 			if (window.EnderecoIntegrator.onLoad && Array.isArray(window.EnderecoIntegrator.onLoad)) {
 				executeCallbacks(window.EnderecoIntegrator.onLoad).then(() => {
@@ -437,7 +466,7 @@
   	<div class="modal-dialog">
     	<div class="modal-content">
       		<div class="modal-header">
-				<h1 class="modal-title fs-5" id="addressModal1Label">Modal title</h1>
+				<h1 class="modal-title fs-5" id="addressModal1Label">Modal 1</h1>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
       		<div class="modal-body">
@@ -526,6 +555,10 @@
 							addressPredictions: '[name="enderecoamsapredictions"]',
 						}, {
 							targetSelector: '#addressModal1',
+							insertPosition: 'beforeend',
+							// insertPosition: 'afterbegin', // This works too for this example, as the Endereco modal would be inserted inside the focus trap.
+							// insertPosition: 'beforebegin', // This would break the example, as the Endereco modal would be inserted outside the focus trap.
+							// insertPosition: 'afterend', // This would break the example, as the Endereco modal would be inserted outside the focus trap.
 							name: 'first_address',
 							addressType: 'general_address'
 						});
@@ -556,7 +589,7 @@
   	<div class="modal-dialog">
     	<div class="modal-content">
       		<div class="modal-header">
-				<h1 class="modal-title fs-5" id="addressModal2Label">Modal title</h1>
+				<h1 class="modal-title fs-5" id="addressModal2Label">Modal 2</h1>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
       		<div class="modal-body">
@@ -645,7 +678,126 @@
 							addressPredictions: '[name="enderecoamsapredictions_2"]',
 						}, {
 							// targetSelector: '#addressModal2',
+							// insertPosition: 'beforeend',
 							name: 'second_address',
+							addressType: 'general_address'
+						});
+					</script>
+				</form>
+
+
+			</div>
+      		<div class="modal-footer">
+				
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button class="btn btn-primary" type="submit" form="second-form">Weiter</button>
+
+			</div>
+    	</div>
+  	</div>
+</div>
+
+
+
+<div class="form-container">
+	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addressModal3">
+		Launch example modal 3 (Using targetSelectorResolve() )
+	</button>
+</div>
+
+<div class="modal fade" id="addressModal3" tabindex="-1" aria-labelledby="addressModal3Label" aria-hidden="true">
+  	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+				<h1 class="modal-title fs-5" id="addressModal3Label">Modal 3</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+      		<div class="modal-body">
+
+
+				<form method="POST" action="" id="third-form">
+					<div class="row">
+						<div>
+							<label class="label">
+								Straße
+								<input type="text" id="street_3">
+							</label>
+						</div>
+						<div>
+							<label class="label">
+								Hausnummer
+								<input type="text" id="street_n_3">
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<div>
+							<label class="label">
+								Straße (voll)
+								<input type="text" id="streetFull_3" value="">
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<div>
+							<label class="label">
+								Postleitzahl
+								<input type="text" id="zip_3">
+							</label>
+						</div>
+						<div>
+							<label class="label">
+								Ort
+								<input type="text" id="loc_3" value="">
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<div>
+							<label class="label">
+								Zusatzinformationen (Appartment, Tür)
+								<input type="text" id="address_1_3">
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<div>
+							<label class="label">
+								Land
+								<select class="country" id="country_3">
+									<option value="" selected>-- Bitte Land auswählen --</option>
+									<option value="DE">Deutschland</option>
+									<option value="FR">Frankreich</option>
+									<option value="US">USA</option>
+								</select>
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<input type="hidden" name="asd">
+						<label>HIDDEN FIELD</label>
+					</div>
+					<div style="display: none">
+						<!-- unsichtbare felder, die ein modul hinzufügen soll -->
+						<input type="hidden" name="enderecoamsstatus_3" value="">
+						<input type="hidden" name="enderecoamsts_3" value="">
+						<input type="hidden" name="enderecoamsapredictions_3" value="">
+					</div>
+
+					<script>
+						enderecoInitAMS({
+							countryCode: '#country_3',
+							postalCode: '#zip_3',
+							locality: '#loc_3',
+							streetFull: '#streetFull_3',
+							streetName: '#street_3',
+							buildingNumber: '#street_n_3',
+							additionalInfo: '#address_1_3',
+							addressStatus: '[name="enderecoamsstatus_3"]',
+							addressTimestamp: '[name="enderecoamsts_3"]',
+							addressPredictions: '[name="enderecoamsapredictions_3"]',
+						}, {
+							name: 'third_address',
 							addressType: 'general_address'
 						});
 					</script>
