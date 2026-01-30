@@ -464,7 +464,8 @@ const EnderecoIntegrator = {
             name: 'default',
             beforeActivation: undefined,
             intent: 'edit',
-            targetSelector: 'body'
+            targetSelector: 'body',
+            insertPosition: 'beforeend'
         }
     ) => {
         if (!window.EnderecoIntegrator.activeServices.ams) {
@@ -493,6 +494,7 @@ const EnderecoIntegrator = {
         addressObject.setIntent(options.intent);
 
         addressObject.setTargetSelector(options.targetSelector);
+        addressObject.setInsertPosition(options.insertPosition);
 
         // Preselect a value.
         if (!addressObject.getCountryCode() && integrator.defaultCountrySelect) {

@@ -526,6 +526,10 @@
 							addressPredictions: '[name="enderecoamsapredictions"]',
 						}, {
 							targetSelector: '#addressModal1',
+							insertPosition: 'beforeend',
+							// insertPosition: 'afterbegin', // This works too for this example, as the Endereco modal would be inserted inside the focus trap.
+							// insertPosition: 'beforebegin', // This would break the example, as the Endereco modal would be inserted outside the focus trap.
+							// insertPosition: 'afterend', // This would break the example, as the Endereco modal would be inserted outside the focus trap.
 							name: 'first_address',
 							addressType: 'general_address'
 						});
@@ -645,6 +649,7 @@
 							addressPredictions: '[name="enderecoamsapredictions_2"]',
 						}, {
 							// targetSelector: '#addressModal2',
+							// insertPosition: 'beforeend',
 							name: 'second_address',
 							addressType: 'general_address'
 						});
